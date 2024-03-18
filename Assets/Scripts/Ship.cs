@@ -2,6 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+
+/*********************************/
+/* Mark Crawford                 */
+/* CSC 350 H, Prof Tang          */
+/* Homework 7                    */
+/* 03/17/2024                    */
+/*********************************/
+
+
 public class Ship : MonoBehaviour
 {
     // fields
