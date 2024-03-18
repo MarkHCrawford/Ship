@@ -9,6 +9,7 @@ public class Ship : MonoBehaviour
     public Vector2 thrustDirection = new Vector2(1, 0);
     public const float ThrustForce = 4.0f;
     public const float RotateDegreesPerSecond = 90;
+    private float rotationInput;
 
     // collider radius
     public float circleRadius;
@@ -31,6 +32,7 @@ public class Ship : MonoBehaviour
         {
             rb2d.AddForce(thrustDirection * ThrustForce, ForceMode2D.Force);
         }
+
     }
 
 
@@ -64,6 +66,19 @@ public class Ship : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // get rotation input
+        rotationInput = Input.GetAxis("Rotate");
         
+       //rotate ship to propel direction of rotation
+       if (rotationInput != 0)
+        {
+            float rotationAmount = RotateDegreesPerSecond * Time.deltaTime;
+            if (rotationInput < 0)
+            {
+                rotationAmount *= -1;
+            }
+            transform.Rotate(Vector3.forward, rotationAmount);
+        }
+       
     }
 }
