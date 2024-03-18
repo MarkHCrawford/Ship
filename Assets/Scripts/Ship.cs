@@ -18,59 +18,21 @@ public class Ship : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ScreenClamp.Initialize();
         // attach rb2d to rigidbody
         rb2d = GetComponent<Rigidbody2D>();
         circleRadius = GetComponent<CircleCollider2D>().radius;
-        ScreenClamp.Initialize();
     }
 
 
     // called once per frame -- synchronizes physics
     private void FixedUpdate()
     {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            rb2d.AddForce(thrustDirection * ThrustForce, ForceMode2D.Force);
-        }
-
-    }
-
-
-    // when ship is no longer visible to camera
-    private void OnBecameInvisible()
-    {
-        //wrap ship around screen
-        
-        if (transform.position.x - circleRadius < ScreenClamp.ScreenLeft)
-        {
-            Debug.Log(ScreenClamp.ScreenLeft);
-            Debug.Log(transform.position.x - circleRadius);
-            transform.position = new Vector3(ScreenClamp.ScreenRight + circleRadius, transform.position.y, transform.position.z);
-
-        }
-        if (transform.position.x + circleRadius > ScreenClamp.ScreenRight)
-        {
-            transform.position = new Vector3(ScreenClamp.ScreenLeft, transform.position.y, transform.position.z);
-        }
-        if (transform.position.y - circleRadius < ScreenClamp.ScreenBottom)
-        {
-            transform.position = new Vector3(transform.position.x, ScreenClamp.ScreenTop + circleRadius, transform.position.z);
-        }
-        if (transform.position.y + circleRadius > ScreenClamp.ScreenTop)
-        {
-            transform.position = new Vector3(transform.position.x, ScreenClamp.ScreenBottom - circleRadius, transform.position.z);
-        }
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
         // get rotation input
         rotationInput = Input.GetAxis("Rotate");
-        
-       //rotate ship to propel direction of rotation
-       if (rotationInput != 0)
+
+        //rotate ship to propel direction of rotation
+        if (rotationInput != 0)
         {
             float rotationAmount = RotateDegreesPerSecond * Time.deltaTime;
             if (rotationInput < 0)
@@ -79,6 +41,45 @@ public class Ship : MonoBehaviour
             }
             transform.Rotate(Vector3.forward, rotationAmount);
         }
-       
+
+        // update thrust direction
+        thrustDirection = new Vector2(Mathf.Cos
+            (transform.eulerAngles.z * Mathf.Deg2Rad),
+            Mathf.Sin(transform.eulerAngles.z * Mathf.Deg2Rad));
+
+        // apply thrust
+        if (Input.GetKey(KeyCode.Space))
+        {
+            rb2d.AddForce(thrustDirection * ThrustForce, ForceMode2D.Force);
+        }
     }
+
+
+    // when ship is no longer visible to camera
+    private void OnBecameInvisible()
+    {
+        //wrap ship around screen
+        
+        if (transform.position.x < ScreenClamp.ScreenLeft)
+        {
+            
+            transform.position = new Vector3(ScreenClamp.ScreenRight, transform.position.y, transform.position.z);
+
+        }
+        if (transform.position.x  > ScreenClamp.ScreenRight)
+        {
+            transform.position = new Vector3(ScreenClamp.ScreenLeft, transform.position.y, transform.position.z);
+        }
+        if (transform.position.y < ScreenClamp.ScreenBottom)
+        {
+            transform.position = new Vector3(transform.position.x, -ScreenClamp.ScreenBottom, transform.position.z);
+        }
+        if (transform.position.y > ScreenClamp.ScreenTop)
+        {
+            transform.position = new Vector3(transform.position.x, ScreenClamp.ScreenBottom, transform.position.z);
+        }
+    }
+
+
+
 }
